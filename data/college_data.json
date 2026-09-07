@@ -1,0 +1,49 @@
+{
+    "college": {
+        "name": "VoxFlow Institute of Technology",
+        "location": "Maharashtra, India",
+        "type": "Engineering College"
+    },
+
+    "admission": {
+        "process": [
+            "Complete the online application form",
+            "Submit required academic documents",
+            "Complete eligibility verification",
+            "Pay the admission fee after selection"
+        ],
+        "eligibility": "Students must satisfy the required academic eligibility criteria for their chosen program.",
+        "application_mode": "Online"
+    },
+
+    "fees": {
+        "application_fee": "₹500",
+        "annual_tuition": "₹85,000",
+        "note": "Fees shown here are demonstration data for the VoxFlow project."
+    },
+
+    "departments": [
+        "Computer Science and Engineering",
+        "Information Technology",
+        "Artificial Intelligence and Data Science",
+        "Electronics and Telecommunication",
+        "Mechanical Engineering"
+    ],
+
+    "examinations": {
+        "midterm": "October",
+        "end_semester": "December",
+        "practical_examinations": "November"
+    },
+
+    "academic": {
+        "semester_count": 8,
+        "working_days": "Monday to Friday",
+        "library_hours": "9:00 AM to 6:00 PM"
+    },
+
+    "contact": {
+        "email": "admissions@voxflow.edu",
+        "phone": "+91 00000 00000"
+    }
+}

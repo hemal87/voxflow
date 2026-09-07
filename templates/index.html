@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VoxFlow — A Voice You Can Interrupt</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <main class="app">
+
+        <header class="header">
+
+            <div class="logo">
+
+                <div class="logo-icon">
+                    V
+                </div>
+
+                <div>
+                    <h1>VoxFlow</h1>
+                    <p>A Voice You Can Interrupt</p>
+                </div>
+
+            </div>
+
+            <div class="live-badge">
+                <span></span>
+                LIVE
+            </div>
+
+        </header>
+
+
+        <!-- VOICE CONTROL -->
+
+        <section class="voice-card">
+
+            <div class="orb">
+                <div class="orb-inner">
+                    🎙️
+                </div>
+            </div>
+
+            <div id="status" class="status">
+                Ready
+            </div>
+
+            <p class="hint">
+                Speak naturally. You can interrupt VoxFlow
+                while it is speaking.
+            </p>
+
+            <button id="startBtn">
+                🎤 Start Talking
+            </button>
+
+        </section>
+
+
+        <!-- PIPELINE -->
+
+        <section class="pipeline-section">
+
+            <h2>Voice Pipeline</h2>
+
+            <div class="pipeline">
+
+                <div class="pipeline-step">
+                    <div class="step-icon">🎤</div>
+                    <strong>Voice</strong>
+                    <span>Microphone</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="pipeline-step">
+                    <div class="step-icon">📝</div>
+                    <strong>STT</strong>
+                    <span>Speech to Text</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="pipeline-step">
+                    <div class="step-icon">🧠</div>
+                    <strong>AI</strong>
+                    <span>Ollama</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="pipeline-step">
+                    <div class="step-icon">⚡</div>
+                    <strong>Task</strong>
+                    <span>Task Engine</span>
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="pipeline-step">
+                    <div class="step-icon">🔊</div>
+                    <strong>TTS</strong>
+                    <span>Voice Output</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LIVE ACTIVITY -->
+
+        <section class="activity-section">
+
+            <div class="section-heading">
+
+                <h2>Live Activity</h2>
+
+                <span>
+                    System Events
+                </span>
+
+            </div>
+
+            <div
+                id="activityLog"
+                class="activity-log"
+            >
+
+                <div class="activity-item">
+
+                    <span class="activity-dot"></span>
+
+                    <div>
+                        <strong>System ready</strong>
+
+                        <small>
+                            Waiting for voice input
+                        </small>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- CONVERSATION -->
+
+        <section class="conversation">
+
+            <div class="conversation-header">
+
+                <h2>Conversation</h2>
+
+                <span>
+                    Voice Session
+                </span>
+
+            </div>
+
+
+            <div class="message user-message">
+
+                <div class="message-label">
+                    👤 You
+                </div>
+
+                <div
+                    id="userText"
+                    class="message-text"
+                >
+                    ---
+                </div>
+
+            </div>
+
+
+            <div class="message assistant-message">
+
+                <div class="message-label">
+                    ✨ VoxFlow
+                </div>
+
+                <div
+                    id="assistantText"
+                    class="message-text"
+                >
+                    ---
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FEATURES -->
+
+        <section class="features">
+
+            <div class="feature">
+                <span>🛑</span>
+
+                <div>
+                    <strong>Barge-in</strong>
+
+                    <p>
+                        Interrupt while VoxFlow speaks.
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="feature">
+                <span>🤫</span>
+
+                <div>
+                    <strong>Smart Silence</strong>
+
+                    <p>
+                        Natural pauses are handled intelligently.
+                    </p>
+                </div>
+            </div>
+
+
+            <div class="feature">
+                <span>⚡</span>
+
+                <div>
+                    <strong>Task Engine</strong>
+
+                    <p>
+                        Handles college-related actions.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+
+        <footer>
+            VoxFlow · Interruptible Voice Task Assistant
+        </footer>
+
+    </main>
+
+
+    <script src="/static/app.js"></script>
+
+
+    <!-- LIVE ACTIVITY MONITOR -->
+
+    <script>
+
+        const activityLog =
+            document.getElementById("activityLog");
+
+        const statusElement =
+            document.getElementById("status");
+
+
+        function addActivity(
+            title,
+            description
+        ) {
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "activity-item";
+
+
+            item.innerHTML = `
+                <span class="activity-dot"></span>
+
+                <div>
+                    <strong>${title}</strong>
+
+                    <small>${description}</small>
+                </div>
+            `;
+
+
+            activityLog.prepend(item);
+
+
+            // Keep only latest 6 events
+
+            while (
+                activityLog.children.length > 6
+            ) {
+
+                activityLog.removeChild(
+                    activityLog.lastChild
+                );
+            }
+        }
+
+
+        // Watch VoxFlow status changes
+
+        const statusObserver =
+            new MutationObserver(() => {
+
+                const status =
+                    statusElement.innerText;
+
+
+                if (
+                    status.includes("Listening")
+                ) {
+
+                    addActivity(
+                        "Listening",
+                        "Microphone is ready"
+                    );
+
+                } else if (
+                    status.includes("Thinking")
+                ) {
+
+                    addActivity(
+                        "Thinking",
+                        "Processing your request"
+                    );
+
+                } else if (
+                    status.includes("speaking")
+                ) {
+
+                    addActivity(
+                        "VoxFlow speaking",
+                        "Voice response is playing"
+                    );
+
+                } else if (
+                    status.includes("Interrupted")
+                ) {
+
+                    addActivity(
+                        "BARGE-IN",
+                        "User interrupted VoxFlow"
+                    );
+
+                } else if (
+                    status.includes("error")
+                ) {
+
+                    addActivity(
+                        "Error",
+                        status
+                    );
+                }
+
+            });
+
+
+        statusObserver.observe(
+            statusElement,
+            {
+                childList: true,
+                characterData: true,
+                subtree: true
+            }
+        );
+
+
+        // Watch assistant response changes
+
+        const assistantElement =
+            document.getElementById(
+                "assistantText"
+            );
+
+
+        const assistantObserver =
+            new MutationObserver(() => {
+
+                if (
+                    assistantElement.innerText !== "---"
+                ) {
+
+                    addActivity(
+                        "Response ready",
+                        "AI generated a response"
+                    );
+                }
+
+            });
+
+
+        assistantObserver.observe(
+            assistantElement,
+            {
+                childList: true,
+                characterData: true,
+                subtree: true
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
