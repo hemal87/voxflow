@@ -22,9 +22,7 @@ VoxFlow does not require the user to speak one perfect sentence.
 
 If the user pauses while speaking, VoxFlow waits briefly before finalizing the request.
 
-Example:
-
-> "Tell me about the college... and also the admission process."
+Example: "Tell me about the college... and also the admission process."
 
 ### 🧠 Local AI
 
@@ -34,9 +32,7 @@ The AI runs locally, so no external LLM API key is required.
 
 ### 🎓 College Knowledge
 
-College information is stored in:
-
-`data/college_data.json`
+College information is stored in `data/college_data.json`.
 
 The assistant uses this information when answering college-related questions.
 
@@ -52,43 +48,11 @@ VoxFlow supports simple simulated college workflows such as:
 
 ## 🏗️ Architecture
 
-```text
-Microphone
-    ↓
-Voice Activity Detection
-    ↓
-Speech Recognition
-    ↓
-User Request
-    ↓
-Task Engine / Local LLM
-    ↓
-Response
-    ↓
-Text-to-Speech
-    ↓
-Speaker
-```
+Microphone → Voice Activity Detection → Speech Recognition → User Request → Task Engine / Local LLM → Response → Text-to-Speech → Speaker
 
 ### Interruption Flow
 
-```text
-Assistant is speaking
-        ↓
-User starts speaking
-        ↓
-VAD detects voice
-        ↓
-BARGE-IN DETECTED
-        ↓
-Stop speech playback
-        ↓
-Invalidate / cancel previous request
-        ↓
-Process new user request
-        ↓
-Speak new response
-```
+Assistant is speaking → User starts speaking → VAD detects voice → BARGE-IN DETECTED → Stop speech playback → Invalidate previous request → Process new user request → Speak new response
 
 ---
 
@@ -107,28 +71,16 @@ Speak new response
 
 ## 📁 Project Structure
 
-```text
-voxflow/
-│
-├── app.py
-├── requirements.txt
-├── README.md
-├── .gitignore
-│
-├── data/
-│   └── college_data.json
-│
-├── static/
-│   ├── app.js
-│   └── style.css
-│
-├── templates/
-│   └── index.html
-│
-└── venv/
-```
+The project contains:
 
-> `venv/` is excluded from GitHub using `.gitignore`.
+- `app.py` — FastAPI backend
+- `requirements.txt` — Python dependencies
+- `data/college_data.json` — demonstration college data
+- `static/app.js` — voice interaction and VAD logic
+- `static/style.css` — UI styling
+- `templates/index.html` — application interface
+- `README.md` — project documentation
+- `.gitignore` — ignored files such as the virtual environment
 
 ---
 
@@ -136,30 +88,21 @@ voxflow/
 
 ### 1. Clone the repository
 
-```bash
-git clone https://github.com/hemal87/voxflow.git
-cd voxflow
-```
+Run: `git clone https://github.com/hemal87/voxflow.git`
+
+Then run: `cd voxflow`
 
 ### 2. Create a Python virtual environment
 
-```bash
-python -m venv venv
-```
+Run: `python -m venv venv`
 
 ### 3. Activate the virtual environment
 
-On Windows:
-
-```bash
-venv\Scripts\activate
-```
+On Windows run: `venv\Scripts\activate`
 
 ### 4. Install dependencies
 
-```bash
-pip install -r requirements.txt
-```
+Run: `pip install -r requirements.txt`
 
 ### 5. Install and run Ollama
 
@@ -167,23 +110,17 @@ Install Ollama and make sure it is running locally.
 
 Pull the required model:
 
-```bash
-ollama pull llama3.2:1b
-```
+`ollama pull llama3.2:1b`
 
 ### 6. Start VoxFlow
 
-```bash
-uvicorn app:app --reload
-```
+Run: `uvicorn app:app --reload`
 
-Open the application in your browser:
+### 7. Open the application
 
-```text
-http://127.0.0.1:8000
-```
+Open `http://127.0.0.1:8000` in your browser.
 
-Allow microphone access when the browser asks for permission.
+Allow microphone access when requested.
 
 ---
 
@@ -191,55 +128,37 @@ Allow microphone access when the browser asks for permission.
 
 ### Information Query
 
-**User:**
+**User:** What is the annual tuition fee?
 
-> What is the annual tuition fee?
+**VoxFlow:** The annual tuition fee is ₹85,000.
 
-**VoxFlow:**
-
-> The annual tuition fee is ₹85,000.
-
----
-
-### 🛑 Barge-in
+### Barge-in
 
 VoxFlow starts answering a question.
 
 While it is speaking, the user says:
 
-> Stop. I have another question. What departments does the college have?
+**"Stop. I have another question. What departments does the college have?"**
 
 VoxFlow stops the current speech and processes the new request.
 
----
+### Smart Silence
 
-### 🤫 Smart Silence
+**User:** "Tell me about the college..."
 
-**User:**
+The user pauses briefly and continues:
 
-> Tell me about the college...
-
-*(short pause)*
-
-> ...and also the admission process.
+**"...and also the admission process."**
 
 VoxFlow waits briefly during the pause and then processes the complete request.
 
----
+### Task Interaction
 
-### ⚙️ Task Interaction
+**User:** Book counselling.
 
-**User:**
+**VoxFlow:** Sure. What day and time would you prefer for your counselling session?
 
-> Book counselling.
-
-**VoxFlow:**
-
-> Sure. What day and time would you prefer for your counselling session?
-
-**User:**
-
-> Friday at 4 PM.
+**User:** Friday at 4 PM.
 
 The counselling request is then simulated as completed.
 
@@ -249,11 +168,13 @@ The counselling request is then simulated as completed.
 
 This project uses **demonstration data and simulated college workflows**.
 
-- College information is stored in `data/college_data.json`.
+- College information is demonstration data stored in `data/college_data.json`.
 - Admission application status is simulated.
-- Counselling booking is simulated and is not connected to a real calendar.
-- No real student records or college database are used.
-- The college information is demonstration data.
+- Counselling booking is simulated.
+- Counselling booking is not connected to a real calendar.
+- No real student records are used.
+- No real college database is used.
+- No real college systems are modified.
 - The project runs locally using Ollama for AI responses.
 
 ---
@@ -261,11 +182,11 @@ This project uses **demonstration data and simulated college workflows**.
 ## ⚠️ Limitations
 
 - Speech recognition depends on browser support for the Web Speech API.
-- The college information is demonstration data.
-- Task operations are simulated and do not modify real college systems.
-- The current project uses browser-based text-to-speech.
-- A production version could use streaming LLM responses and a real database/calendar.
-- Microphone permissions are required for voice interaction.
+- College information is demonstration data.
+- Task operations are simulated.
+- The project does not connect to real college systems.
+- A production version could use streaming LLM responses and a real database or calendar.
+- Microphone permissions are required.
 
 ---
 
@@ -289,14 +210,11 @@ VoxFlow is designed around a more natural interaction:
 
 > **The user can speak whenever they want.**
 
-The core interaction loop is:
+The core interaction is:
 
-```text
-Listen → Understand → Respond
-             ↑
-             │
-       Interrupt anytime
-```
+**Listen → Understand → Respond**
+
+with interruption available while the assistant is speaking.
 
 ---
 
