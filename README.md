@@ -251,3 +251,13 @@ VoxFlow — A Voice You Can Interrupt
 Built as an interruptible voice task assistant demonstrating:
 
 VAD + STT + LLM + Task Engine + TTS + Barge-in
+
+## 🧪 What Is Mocked?
+
+This project uses demonstration data and simulated college workflows.
+
+- College information is stored in `data/college_data.json`.
+- Admission application status is simulated.
+- Counselling booking is simulated and is not connected to a real calendar.
+- No real student records or college database are used.
+- The project runs locally using Ollama for AI responses.
