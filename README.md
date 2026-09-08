@@ -132,7 +132,7 @@ voxflow/
 
 ---
 
-## 🚀 Running VoxFlow
+## How to Run
 
 ### 1. Clone the repository
 
@@ -245,7 +245,7 @@ The counselling request is then simulated as completed.
 
 ---
 
-## 🧪 What Is Mocked?
+## What Is Mocked?
 
 This project uses **demonstration data and simulated college workflows**.
 
