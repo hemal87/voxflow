@@ -1,141 +1,109 @@
-# 🎙 VoxFlow
+# 🎙️ VoxFlow — A Voice You Can Interrupt
 
-## A Voice You Can Interrupt
-
-VoxFlow is an interruptible voice-based college assistant designed around
-a simple idea:
+**VoxFlow** is an interruptible voice-based college assistant designed around one key idea:
 
 > **The user should be able to interrupt the assistant at any time.**
 
-Unlike a traditional voice assistant that waits for its response to finish,
-VoxFlow detects user speech while speaking, immediately stops its voice
-output, invalidates the previous response, and switches back to listening.
+VoxFlow combines voice activity detection, speech recognition, a local LLM, task handling, and text-to-speech into a browser-based voice assistant.
 
 ---
 
 ## ✨ Key Features
 
-### 🛑 Barge-in
+### 🛑 Barge-in / Interruption
 
-The user can interrupt VoxFlow while it is speaking.
+While VoxFlow is speaking, the user can start talking.
+
+VoxFlow detects the user's voice, immediately stops the current speech output, invalidates the previous response, and starts processing the new request.
+
+### 🤫 Smart Silence Handling
+
+VoxFlow does not require the user to speak one perfect sentence.
+
+If the user pauses while speaking, VoxFlow waits briefly before finalizing the request.
+
+Example:
+
+> "Tell me about the college... and also the admission process."
+
+### 🧠 Local AI
+
+VoxFlow uses **Ollama** with the `llama3.2:1b` model.
+
+The AI runs locally, so no external LLM API key is required.
+
+### 🎓 College Knowledge
+
+College information is stored in:
+
+`data/college_data.json`
+
+The assistant uses this information when answering college-related questions.
+
+### ⚙️ Task Engine
+
+VoxFlow supports simple simulated college workflows such as:
+
+- Checking admission application status
+- Booking a counselling session
+- Cancelling a counselling request
+
+---
+
+## 🏗️ Architecture
 
 ```text
-VoxFlow speaking
-       ↓
-User starts speaking
-       ↓
+Microphone
+    ↓
 Voice Activity Detection
-       ↓
-BARGE-IN detected
-       ↓
-Stop current speech
-       ↓
-Cancel / invalidate old request
-       ↓
-Listen to new request
+    ↓
+Speech Recognition
+    ↓
+User Request
+    ↓
+Task Engine / Local LLM
+    ↓
+Response
+    ↓
+Text-to-Speech
+    ↓
+Speaker
+```text
 
-Smart Silence Handling
-
-VoxFlow does not immediately submit incomplete speech.
-
-It waits for a short period of silence before finalizing the user's request.
-
-For example:
-"Tell me about the college..."
+Interruption Flow
+Assistant is speaking
         ↓
-short pause
+User starts speaking
         ↓
-"...and also the admission process."
+VAD detects voice
         ↓
-single request
+BARGE-IN DETECTED
+        ↓
+Stop speech playback
+        ↓
+Invalidate / cancel previous request
+        ↓
+Process new user request
+        ↓
+Speak new response
 
-🧠 Local AI
+```text 
 
-VoxFlow uses a locally running Ollama model instead of requiring a cloud
-API key.
-
-📚 College Knowledge
-
-College-specific information is stored in:
-
-data/college_data.json
-
-This allows VoxFlow to answer questions using structured college data.
-
-⚡ Task Engine
-
-VoxFlow can perform simple college-related tasks such as:
-
-Check admission application status
-Start a counselling booking
-Collect a preferred counselling slot
-Cancel a counselling request
-
-🏗 Architecture
-
-                    ┌──────────────────┐
-                    │   Browser Mic    │
-                    └────────┬─────────┘
-                             │
-                             ▼
-                    ┌──────────────────┐
-                    │       STT        │
-                    │ Speech-to-Text   │
-                    └────────┬─────────┘
-                             │
-                             ▼
-                    ┌──────────────────┐
-                    │   Task Router    │
-                    └───────┬───┬──────┘
-                            │   │
-                  ┌─────────┘   └──────────┐
-                  ▼                        ▼
-          ┌──────────────┐        ┌──────────────┐
-          │ College Data │        │  Task Engine │
-          │    JSON      │        │   Actions    │
-          └──────┬───────┘        └──────┬───────┘
-                 │                       │
-                 └──────────┬────────────┘
-                            ▼
-                    ┌──────────────────┐
-                    │  Local Ollama   │
-                    │       LLM       │
-                    └────────┬─────────┘
-                             │
-                             ▼
-                    ┌──────────────────┐
-                    │       TTS        │
-                    │ Voice Response   │
-                    └────────┬─────────┘
-                             │
-                             ▼
-                    ┌──────────────────┐
-                    │ Browser Speaker  │
-                    └──────────────────┘
-
-
-          ┌────────────────────────────────────┐
-          │          BARGE-IN PATH             │
-          │                                    │
-          │ User voice → VAD → Stop TTS       │
-          │              ↓                     │
-          │      Invalidate old response       │
-          │              ↓                     │
-          │       Listen to new request        │
-          └────────────────────────────────────┘
-
-          🛠 Tech Stack
-Component	Technology
-Frontend	HTML, CSS, JavaScript
-Speech Recognition	Web Speech API
-Voice Activity Detection	Web Audio API
-Text-to-Speech	Browser Speech Synthesis
-Backend	Python + FastAPI
-LLM	Ollama + Llama 3.2 1B
-Data	JSON
-Runtime	Local machine
+🛠️ Tech Stack
+Frontend: HTML, CSS, JavaScript
+Speech Recognition: Web Speech API
+Voice Activity Detection: Web Audio API
+Text-to-Speech: Browser Speech Synthesis API
+Backend: Python + FastAPI
+LLM: Ollama + Llama 3.2 1B
+Data: JSON
+Server: Uvicorn
 📁 Project Structure
 voxflow/
+│
+├── app.py
+├── requirements.txt
+├── README.md
 │
 ├── data/
 │   └── college_data.json
@@ -147,34 +115,35 @@ voxflow/
 ├── templates/
 │   └── index.html
 │
-├── app.py
-├── requirements.txt
-└── README.md
-
+└── .gitignore
 🚀 Running VoxFlow
-1. Create virtual environment
+1. Clone the repository
+git clone https://github.com/hemal87/voxflow.git
+cd voxflow
+2. Create a Python virtual environment
 python -m venv venv
-2. Activate it
+3. Activate the virtual environment
 
-Windows:
+On Windows:
 
 venv\Scripts\activate
-3. Install dependencies
+4. Install dependencies
 pip install -r requirements.txt
-4. Start Ollama
+5. Install and run Ollama
 
-Make sure Ollama is installed and the model is available:
+Install Ollama and make sure it is running locally.
+
+Pull the required model:
 
 ollama pull llama3.2:1b
-5. Start the FastAPI server
+6. Start VoxFlow
 uvicorn app:app --reload
-6. Open VoxFlow
 
-Open:
+Open the application in your browser:
 
 http://127.0.0.1:8000
-🎯 Example Interaction
-Information
+🎤 Voice Interaction Examples
+Information Query
 
 User:
 
@@ -184,7 +153,29 @@ VoxFlow:
 
 The annual tuition fee is ₹85,000.
 
-Task
+Barge-in
+
+VoxFlow starts answering a question.
+
+While it is speaking, the user says:
+
+Stop. I have another question. What departments does the college have?
+
+VoxFlow stops the current speech and processes the new request.
+
+Smart Silence
+
+User:
+
+Tell me about the college...
+
+(short pause)
+
+...and also the admission process.
+
+VoxFlow waits briefly during the pause and then processes the complete request.
+
+Task Interaction
 
 User:
 
@@ -192,72 +183,56 @@ Book counselling.
 
 VoxFlow:
 
-Sure. What day and time would you prefer?
+Sure. What day and time would you prefer for your counselling session?
 
 User:
 
 Friday at 4 PM.
 
-VoxFlow:
+The counselling request is then simulated as completed.
 
-Done. Your counselling request has been booked for Friday at 4 PM.
-
-Barge-in
-
-VoxFlow:
-
-The admission process consists of several steps...
-
-User:
-
-Stop! I have another question.
-
-VoxFlow immediately stops speaking.
-
-The new request is then captured and processed.
-
-💡 Why VoxFlow?
-
-Normal voice assistants often behave like:
-
-User → Assistant speaks completely → User speaks
-
-VoxFlow changes this interaction model:
-
-User → Assistant speaks
-          ↑
-          │
-     User can interrupt
-          │
-          ↓
-Assistant stops immediately
-
-The interruption itself is treated as a first-class interaction rather
-than an error.
-
-🔮 Future Improvements
-Streaming LLM generation
-Streaming TTS
-More robust microphone/speaker echo handling
-Persistent appointment storage
-Real college database integration
-Authentication
-Calendar integration
-More advanced task workflows
-👨‍💻 Project
-
-VoxFlow — A Voice You Can Interrupt
-
-Built as an interruptible voice task assistant demonstrating:
-
-VAD + STT + LLM + Task Engine + TTS + Barge-in
-
-## 🧪 What Is Mocked?
+🧪 What Is Mocked?
 
 This project uses demonstration data and simulated college workflows.
 
-- College information is stored in `data/college_data.json`.
-- Admission application status is simulated.
-- Counselling booking is simulated and is not connected to a real calendar.
-- No real student records or college database are used.
-- The project runs locally using Ollama for AI responses.
+College information is stored in data/college_data.json.
+Admission application status is simulated.
+Counselling booking is simulated and is not connected to a real calendar.
+No real student records or college database are used.
+The college information is demonstration data.
+The project runs locally using Ollama for AI responses.
+⚠️ Limitations
+Speech recognition depends on browser support for the Web Speech API.
+The college information is demonstration data.
+Task operations are simulated and do not modify real college systems.
+A production version could use streaming LLM responses and a real database/calendar.
+Microphone permissions are required for voice interaction.
+🔮 Future Improvements
+Streaming LLM responses
+More robust server-side cancellation
+Real college database integration
+Real calendar integration
+Improved multilingual speech recognition
+Authentication and user-specific task management
+More advanced voice activity detection
+💡 Why VoxFlow?
+
+Most voice assistants assume that the user waits until the assistant finishes speaking.
+
+VoxFlow is designed around a more natural interaction:
+
+The user can speak whenever they want.
+
+The core interaction loop is therefore:
+
+Listen → Understand → Respond
+             ↑
+             |
+        Interrupt anytime
+📌 Project
+
+Project: VoxFlow — A Voice You Can Interrupt
+
+Problem: 5 · A Voice You Can Interrupt
+
+Purpose: Demonstration project for an interruptible voice-based college assistant.
